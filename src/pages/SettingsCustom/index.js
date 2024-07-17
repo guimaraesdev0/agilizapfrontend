@@ -65,7 +65,6 @@ const SettingsCustom = () => {
   const [settings, setSettings] = useState({});
   const [schedulesEnabled, setSchedulesEnabled] = useState(false);
 
-  const { getCurrentUserInfo } = useAuth();
   const { find, updateSchedules } = useCompanies();
   const { getAll: getAllSettings } = useSettings();
 
@@ -89,7 +88,7 @@ const SettingsCustom = () => {
           }
         }
 
-        const user = await getCurrentUserInfo();
+        const user = "teste"
         setCurrentUser(user);
       } catch (e) {
         toast.error(e);
@@ -120,7 +119,7 @@ const SettingsCustom = () => {
             }
           }
   
-          const user = await getCurrentUserInfo();
+          const user = "teste"
           setCurrentUser(user);
         } catch (e) {
           toast.error(e);
