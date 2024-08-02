@@ -47,13 +47,7 @@ const Copyright = () => {
 		</Typography>
 	);
 };
-axios.get("localhost:8080")
-  .then(response => {
-    console.log('Dados da API:', response.data);
-  })
-  .catch(error => {
-    console.error('Erro ao consumir API:', error);
-});
+
 
 const useStyles = makeStyles(theme => ({
 	paper: {
