@@ -187,7 +187,6 @@ const TicketsManagerTabs = () => {
 
   useEffect(async () => {
 
-      setShowAllTickets(true);
     
 
     // Pega todos os Queue (filas) e seta para usuário, assim permitindo que ele veja todos os tickets mesmo não estando na fila
@@ -402,7 +401,7 @@ const TicketsManagerTabs = () => {
       <TabPanel value={tab} name="closed" className={classes.ticketsWrapper}>
         <TicketsList
           status="closed"
-          showAll={true}
+          showAll={showAllTickets}
           selectedQueueIds={selectedQueueIds}
         />
       </TabPanel>
@@ -419,7 +418,7 @@ const TicketsManagerTabs = () => {
         <TicketsList
           key={refreshKey}
           searchParam={searchParam}
-          showAll={true}
+          showAll={showAllTickets}
           orderBy={selectedbyData}
           status={selectedStatus}
           tags={selectedTags}

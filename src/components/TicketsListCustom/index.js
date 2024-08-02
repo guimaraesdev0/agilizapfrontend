@@ -172,7 +172,6 @@ const TicketsListCustom = (props) => {
   const { profile, queues } = user;
 
 
-
   const socketManager = useContext(SocketContext);
 
   useEffect(() => {

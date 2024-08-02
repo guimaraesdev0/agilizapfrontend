@@ -12,6 +12,8 @@ import { Can } from "../Can";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
 import ScheduleModal from "../ScheduleModal";
+import AddAgentDialog from "../AddAgentModal";
+
 
 const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 	const [confirmationOpen, setConfirmationOpen] = useState(false);
@@ -20,6 +22,7 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 	const { user } = useContext(AuthContext);
 
 	const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+	const [addAgentModalOpen, setAddAgentModalOpen] = useState(false);
 	const [contactId, setContactId] = useState(null);
 
 	useEffect(() => {
@@ -58,6 +61,15 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 		setScheduleModalOpen(true);
 	}
 
+	const handleOpenAddAgentModal = () => {
+		  handleClose();
+		  setAddAgentModalOpen(true);
+	}
+
+	const handleCloseAddAgentModal = () => {
+		setAddAgentModalOpen(false);
+	}
+
 	const handleCloseScheduleModal = () => {
 		setScheduleModalOpen(false);
 		setContactId(null);
@@ -83,6 +95,9 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 			>
 				<MenuItem onClick={handleOpenScheduleModal}>
 					{i18n.t("ticketOptionsMenu.schedule")}
+				</MenuItem>
+				<MenuItem onClick={handleOpenAddAgentModal}>
+					Adicionar agente em ticket
 				</MenuItem>
 				<MenuItem onClick={handleOpenTransferModal}>
 					{i18n.t("ticketOptionsMenu.transfer")}
@@ -114,6 +129,11 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 				onClose={handleCloseTransferTicketModal}
 				ticketid={ticket.id}
 			/>
+			<AddAgentDialog
+				open={addAgentModalOpen}
+				ticketid={ticket.id}
+				onClose={handleCloseAddAgentModal}
+			/>
 			<ScheduleModal
 				open={scheduleModalOpen}
 				onClose={handleCloseScheduleModal}
@@ -121,6 +141,9 @@ const TicketOptionsMenu = ({ ticket, menuOpen, handleClose, anchorEl }) => {
 				contactId={contactId}
 			/>
 		</>
+
+
+
 	);
 };
 
