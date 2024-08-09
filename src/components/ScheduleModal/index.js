@@ -123,7 +123,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, ticketId, cleanCo
 
 					const { data } = await api.get(`/schedules/${scheduleId}`);
 					setSchedule(prevState => {
-						return { ...prevState, ...data, sendAt: moment(data.sendAt).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm')
+						return { ...prevState, ...data, sendAt: moment(data.sendAt).tz('America/Sao_Paulo').add(3, 'hour').format('YYYY-MM-DDTHH:mm')
  };
 					});
 					setCurrentContact(data.contact);
@@ -306,9 +306,11 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, ticketId, cleanCo
 								</Grid>
 								<br />
 								<div className={classes.multFieldLine}>
+									
+									
 									<Field
 										as={TextField}
-										label={i18n.t("scheduleModal.form.sendAt")}
+										label={i18n.t("scheduleModal.form.sendAt")}							
 										type="datetime-local"
 										name="sendAt"
 										InputLabelProps={{
