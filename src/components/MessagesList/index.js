@@ -348,6 +348,8 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
           });
 
           if (currentTicketId.current === ticketId) {
+            console.log("CHAT load_messages 000001")
+
             dispatch({ type: "LOAD_MESSAGES", payload: data.messages });
             setHasMore(data.hasMore);
             setLoading(false);
@@ -376,11 +378,14 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
 
     socket.on(`company-${companyId}-appMessage`, (data) => {
       if (data.action === "create" && data.message.ticketId === currentTicketId.current) {
+        console.log(data.message.ticketId + "DATA: " + JSON.stringify(data))
         dispatch({ type: "ADD_MESSAGE", payload: data.message });
         scrollToBottom();
       }
 
       if (data.action === "update" && data.message.ticketId === currentTicketId.current) {
+        console.log("CHAT UPDATE 000001")
+
         dispatch({ type: "UPDATE_MESSAGE", payload: data.message });
       }
     });

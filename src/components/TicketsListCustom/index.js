@@ -259,14 +259,22 @@ const TicketsListCustom = (props) => {
       }
 
       if (data.action === "create" && shouldUpdateTicket(data.ticket) && ( status === undefined || data.ticket.status === status)) {
-        dispatch({
-          type: "UPDATE_TICKET_UNREAD_MESSAGES",
-          payload: data.ticket,
-        });
+
+        if (data.ticket.status === "pending" && user.whatsappId === data.ticket.whatsappId) {
+          dispatch({
+            type: "UPDATE_TICKET_UNREAD_MESSAGES",
+            payload: data.ticket,
+          });         
+        }else{
+        }
+
+
+
       }
     });
 
     socket.on(`company-${companyId}-contact`, (data) => {
+
       if (data.action === "update") {
         dispatch({
           type: "UPDATE_TICKET_CONTACT",

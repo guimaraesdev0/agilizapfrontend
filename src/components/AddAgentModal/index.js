@@ -13,13 +13,13 @@ const AddAgentDialog = ({ open, onClose, onAddUser, ticketid }) => {
   const [users, setUsers] = useState([]);
 
   const handleAddUser = async () => {
+    
     console.log(`Adding users to ticket ${ticketid}:`, users);
     try {
-      await api.post('/addUserInTicket', {ticketid, users});
-      toast.success("Usuário(s) adicionado com sucesso.");
-      setUsers([]); // Limpar usuários após adicionar
+      await api.post('/addUserInTicket', {ticketid, users})
+      toast.success("Usuário(s) adicionado com sucesso.")
     } catch (error) {
-      toast.error("Ocorreu um erro ao adicionar o usuário no ticket");
+      toast.error("Ocorreu um erro ao adicionar o usuário no ticket")
     }
   };
 

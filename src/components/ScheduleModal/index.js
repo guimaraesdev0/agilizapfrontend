@@ -21,7 +21,7 @@ import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import { FormControl, Grid, IconButton } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import moment from "moment"
+import moment from 'moment-timezone';
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { isArray, capitalize } from "lodash";
 import DeleteOutline from "@material-ui/icons/DeleteOutline";
@@ -68,7 +68,7 @@ const ScheduleSchema = Yup.object().shape({
 	sendAt: Yup.string().required("Obrigatório")
 });
 
-const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, reload }) => {
+const ScheduleModal = ({ open, onClose, scheduleId, contactId, ticketId, cleanContact, reload }) => {
 	const classes = useStyles();
 	const history = useHistory();
 	const { user } = useContext(AuthContext);
@@ -76,7 +76,8 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 	const initialState = {
 		body: "",
 		contactId: "",
-		sendAt: moment().add(1, 'hour').format('YYYY-MM-DDTHH:mm'),
+		ticketId: "",
+		sendAt: moment().tz('America/Sao_Paulo').add(1, 'hour').format('YYYY-MM-DDTHH:mm'),
 		sentAt: ""
 	};
 
@@ -122,7 +123,8 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 
 					const { data } = await api.get(`/schedules/${scheduleId}`);
 					setSchedule(prevState => {
-						return { ...prevState, ...data, sendAt: moment(data.sendAt).format('YYYY-MM-DDTHH:mm') };
+						return { ...prevState, ...data, sendAt: moment(data.sendAt).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm')
+ };
 					});
 					setCurrentContact(data.contact);
 				})()
@@ -146,7 +148,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 	};
 
 	const handleSaveSchedule = async values => {
-		const scheduleData = { ...values, userId: user.id };
+		const scheduleData = { ...values, userId: user.id, ticketId: ticketId };
 		try {
 			if (scheduleId) {
 				await api.put(`/schedules/${scheduleId}`, scheduleData);
