@@ -148,6 +148,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, ticketId, cleanCo
 	};
 
 	const handleSaveSchedule = async values => {
+
 		const scheduleData = { ...values, userId: user.id, ticketId: ticketId };
 		try {
 			if (scheduleId) {

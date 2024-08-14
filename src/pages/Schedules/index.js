@@ -15,7 +15,7 @@ import MainHeaderButtonsWrapper from "../../components/MainHeaderButtonsWrapper"
 import ScheduleModal from "../../components/ScheduleModal";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import toastError from "../../errors/toastError";
-import moment from "moment";
+import moment from 'moment-timezone';
 import { SocketContext } from "../../context/Socket/SocketContext";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import usePlans from "../../hooks/usePlans";
@@ -309,8 +309,8 @@ const Schedules = () => {
                 />
               </div>
             ),
-            start: new Date(schedule.sendAt),
-            end: new Date(schedule.sendAt),
+            start: new Date(moment(schedule.sendAt).tz('America/Sao_Paulo').add(3, 'hour').format('YYYY-MM-DDTHH:mm')),
+            end: new Date(moment(schedule.sendAt).tz('America/Sao_Paulo').add(3, 'hour').format('YYYY-MM-DDTHH:mm')),
           }))}
           startAccessor="start"
           endAccessor="end"
