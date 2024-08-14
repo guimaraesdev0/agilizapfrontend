@@ -162,6 +162,7 @@ const TicketsListCustom = (props) => {
     showAll,
     orderBy,
     selectedQueueIds,
+    unreadMessages,
     updateCount,
     style,
   } = props;
@@ -170,7 +171,6 @@ const TicketsListCustom = (props) => {
   const [ticketsList, dispatch] = useReducer(reducer, []);
   const { user } = useContext(AuthContext);
   const { profile, queues } = user;
-
 
   const socketManager = useContext(SocketContext);
 
@@ -185,6 +185,7 @@ const TicketsListCustom = (props) => {
     status,
     showAll,
     orderBy: orderBy,
+    withUnreadMessages: unreadMessages,
     tags: JSON.stringify(tags),
     users: JSON.stringify(users),
     queueIds: JSON.stringify(selectedQueueIds),

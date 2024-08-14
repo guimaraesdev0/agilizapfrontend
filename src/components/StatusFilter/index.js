@@ -12,6 +12,7 @@ export function StatusFilter({ onFiltered }) {
 
   const options = [
     { name: 'Todos', value: undefined },
+    { name: 'Mensagens não lidas', value: "unread"},
     { name: 'Pendentes', value: "pending" },
     { name: 'Em atendimento', value: "open" },
     { name: 'Finalizado', value: "closed" },

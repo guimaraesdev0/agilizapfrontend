@@ -160,6 +160,7 @@ const TicketsManagerTabs = () => {
   const [tabOpen, setTabOpen] = useState("open");
   const [newTicketModalOpen, setNewTicketModalOpen] = useState(false);
   const [showAllTickets, setShowAllTickets] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(false);
   const searchInputRef = useRef();
   const { user } = useContext(AuthContext);
   const { profile } = user;
@@ -180,14 +181,14 @@ const TicketsManagerTabs = () => {
   const [refreshKey, setRefreshKey] = useState(0);
 
 
-  
+
   useEffect(() => {
     setRefreshKey(prevKey => prevKey + 1); // Atualize a chave para forçar re-renderização
   }, [selectedStatus, selectedTags, selectedUsers, selectedbyData]);
 
   useEffect(async () => {
 
-    
+
 
     // Pega todos os Queue (filas) e seta para usuário, assim permitindo que ele veja todos os tickets mesmo não estando na fila
     const { data } = await api.get('/queue/')
@@ -257,7 +258,13 @@ const TicketsManagerTabs = () => {
   }
 
   const handleSelectedStatus = (selecteds) => {
-    setselectedStatus(selecteds)    
+    if (selecteds == "unread") {
+      setUnreadMessages(true);
+      setselectedStatus("open");
+    } else {
+      setUnreadMessages(false);
+      setselectedStatus(selecteds);
+    }
   }
 
   return (
@@ -410,15 +417,16 @@ const TicketsManagerTabs = () => {
         <TagsFilter onFiltered={handleSelectedTags} />
 
         {profile === "admin" && (
-          <UsersFilter padding={{ padding: "0px 10px 10px" }} onFiltered={handleSelectedUsers} placeholder={"Filtro por usuário"}  />
+          <UsersFilter padding={{ padding: "0px 10px 10px" }} onFiltered={handleSelectedUsers} placeholder={"Filtro por usuário"} />
         )}
 
-          <DataFilter onFiltered={handleSelectTime} className={classes.filterItem} />
-          <StatusFilter onFiltered={handleSelectedStatus} className={classes.filterItem} />
+        <DataFilter onFiltered={handleSelectTime} className={classes.filterItem} />
+        <StatusFilter onFiltered={handleSelectedStatus} className={classes.filterItem} />
 
         <TicketsList
           key={refreshKey}
           searchParam={searchParam}
+          unreadMessages={unreadMessages}
           showAll={showAllTickets}
           orderBy={selectedbyData}
           status={selectedStatus}
