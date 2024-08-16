@@ -134,14 +134,16 @@ const NotificationsPopOver = (volume) => {
 			}
 		});
 
+
 		socket.on(`company-${user.companyId}-appMessage`, data => {
 			if (
 				data.action === "create" && !data.message.fromMe &&
 				(data.ticket.status === "pending") &&
 				(!data.message.read || data.ticket.status === "pending") &&
-				(data.ticket.userId === user?.id || !data.ticket.userId) &&
+				(data.ticket.userId === user?.id || !data.ticket.userId) && (user.whatsappId == data.ticket.whatsappId) &&
 				(user?.queues?.some(queue => (queue.id === data.ticket.queueId)) || !data.ticket.queueId)
 			) {
+				console.log(JSON.stringify(data.ticket))
 				setNotifications(prevState => {
 					const ticketIndex = prevState.findIndex(t => t.id === data.ticket.id);
 					if (ticketIndex !== -1) {
