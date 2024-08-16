@@ -16,13 +16,17 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import IconButton from "@material-ui/core/IconButton";
+import { Can } from "../Can";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+import Typography from "@material-ui/core/Typography";
+
 import { i18n } from "../../translate/i18n";
 import { head } from "lodash";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import MessageVariablesPicker from "../MessageVariablesPicker";
-import ButtonWithSpinner from "../ButtonWithSpinner";
 
 import {
     FormControl,
@@ -46,11 +50,9 @@ const useStyles = makeStyles((theme) => ({
             marginRight: theme.spacing(1),
         },
     },
-
     btnWrapper: {
         position: "relative",
     },
-
     buttonProgress: {
         color: green[500],
         position: "absolute",
@@ -71,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
 
 const QuickeMessageSchema = Yup.object().shape({
     shortcode: Yup.string().required("Obrigatório"),
-    //   message: Yup.string().required("Obrigatório"),
+    message: Yup.string().required("Obrigatório"),
 });
 
 const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
@@ -84,12 +86,14 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
         shortcode: "",
         message: "",
         geral: false,
-        status: true,
-    };
+        status: true
+    };   
 
     const [confirmationOpen, setConfirmationOpen] = useState(false);
     const [quickemessage, setQuickemessage] = useState(initialState);
     const [attachment, setAttachment] = useState(null);
+    const [saveForAll, setSaveForAll] = useState(false);
+    const [isAdminMessage, setIsAdminMessage] = useState(false);
     const attachmentFile = useRef(null);
 
     useEffect(() => {
@@ -102,11 +106,13 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                 setQuickemessage((prevState) => {
                     return { ...prevState, ...data };
                 });
+                setSaveForAll(data.showAll);
+                setIsAdminMessage(data.showAll && profile !== "admin");
             })();
         } catch (err) {
             toastError(err);
         }
-    }, [quickemessageId, open]);
+    }, [quickemessageId, open, profile]);
 
     const handleClose = () => {
         setQuickemessage(initialState);
@@ -115,7 +121,6 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
     };
 
     const handleAttachmentFile = (e) => {
-      
         const file = head(e.target.files);
         if (file) {
             setAttachment(file);
@@ -123,8 +128,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
     };
 
     const handleSaveQuickeMessage = async (values) => {
-
-        const quickemessageData = { ...values, isMedia: true, mediaPath: attachment ? String(attachment.name).replace(/ /g, "_") : values.mediaPath ? path.basename(values.mediaPath).replace(/ /g, "_") : null };
+        const quickemessageData = { ...values, showAll: saveForAll, isMedia: true, mediaPath: attachment ? String(attachment.name).replace(/ /g, "_") : values.mediaPath ? path.basename(values.mediaPath).replace(/ /g, "_") : null };
 
         try {
             if (quickemessageId) {
@@ -148,8 +152,8 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                 }
             }
             toast.success(i18n.t("quickMessages.toasts.success"));
+            setSaveForAll(false);
             if (typeof reload == "function") {
-
                 reload();
             }
         } catch (err) {
@@ -172,7 +176,6 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
             }));
             toast.success(i18n.t("quickMessages.toasts.deleted"));
             if (typeof reload == "function") {
-
                 reload();
             }
         }
@@ -211,6 +214,33 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                     {quickemessageId
                         ? `${i18n.t("quickMessages.dialog.edit")}`
                         : `${i18n.t("quickMessages.dialog.add")}`}
+                    {isAdminMessage && (
+                        <Typography variant="subtitle2" color="textSecondary">
+                            Criado por um admin
+                        </Typography>
+                    )}
+                    <Can
+                        role={user.profile}
+                        perform="tickets-manager:showall"
+                        yes={() => (
+                            <FormControlLabel
+                                label={`Replicar para todos usuarios`}
+                                labelPlacement="start"
+                                control={
+                                    <Switch
+                                        size="small"
+                                        checked={saveForAll}
+                                        onChange={() =>
+                                            setSaveForAll((prevState) => !prevState)
+                                        }
+                                        name="showAllTickets"
+                                        color="primary"
+                                        disabled={isAdminMessage}
+                                    />
+                                }
+                            />
+                        )}
+                    />
                 </DialogTitle>
                 <div style={{ display: "none" }}>
                     <input
@@ -245,6 +275,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                                             variant="outlined"
                                             margin="dense"
                                             fullWidth
+                                            disabled={isAdminMessage}
                                         />
                                     </Grid>
                                     <Grid xs={12} item>
@@ -260,12 +291,12 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                                             multiline={true}
                                             rows={7}
                                             fullWidth
-                                        // disabled={quickemessage.mediaPath || attachment ? true : false}
+                                            disabled={isAdminMessage}
                                         />
                                     </Grid>
                                     <Grid item>
                                         <MessageVariablesPicker
-                                            disabled={isSubmitting}
+                                            disabled={isSubmitting || isAdminMessage}
                                             onClick={value => handleClickMsgVar(value, setFieldValue)}
                                         />
                                     </Grid>
@@ -277,6 +308,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                                             <IconButton
                                                 onClick={() => setConfirmationOpen(true)}
                                                 color="secondary"
+                                                disabled={isAdminMessage}
                                             >
                                                 <DeleteOutlineIcon color="secondary" />
                                             </IconButton>
@@ -289,7 +321,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                                     <Button
                                         color="primary"
                                         onClick={() => attachmentFile.current.click()}
-                                        disabled={isSubmitting}
+                                        disabled={isSubmitting || isAdminMessage}
                                         variant="outlined"
                                     >
                                         {i18n.t("quickMessages.buttons.attach")}
@@ -306,7 +338,7 @@ const QuickMessageDialog = ({ open, onClose, quickemessageId, reload }) => {
                                 <Button
                                     type="submit"
                                     color="primary"
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || isAdminMessage}
                                     variant="contained"
                                     className={classes.btnWrapper}
                                 >
