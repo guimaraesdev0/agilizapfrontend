@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`, 
     display: "flex",
     flexDirection: "column",
+    backgroundSize: "cover",
     flexGrow: 1,
     padding: "20px 20px 20px 20px",
     overflowY: "scroll",
@@ -378,7 +379,6 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
 
     socket.on(`company-${companyId}-appMessage`, (data) => {
       if (data.action === "create" && data.message.ticketId === currentTicketId.current) {
-        console.log(data.message.ticketId + "DATA: " + JSON.stringify(data))
         dispatch({ type: "ADD_MESSAGE", payload: data.message });
         scrollToBottom();
       }

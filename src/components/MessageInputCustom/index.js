@@ -534,13 +534,14 @@ const MessageInputCustom = (props) => {
 
       await api.post(`/messages/${ticketId}`, formData);
     } catch (err) {
-      toastError(err);
+      toastError('Erro ao upload de quickmessagemedia');
       setLoading(false);
     }
     setLoading(false);
   };
   
   const handleQuickAnswersClick = async (value) => {
+
     if (value.mediaPath) {
       try {
         const { data } = await axios.get(value.mediaPath, {
@@ -548,11 +549,11 @@ const MessageInputCustom = (props) => {
         });
 
         handleUploadQuickMessageMedia(data, value.value);
-        setInputMessage("");
+        setInputMessage(value.value);
         return;
         //  handleChangeMedias(response)
       } catch (err) {
-        toastError(err);
+        toastError(JSON.stringify(err));
       }
     }
 
@@ -584,8 +585,8 @@ const MessageInputCustom = (props) => {
   const handleSendMessage = async () => {
     if (inputMessage.trim() === "") return;
     setLoading(true);
-
-    const message = {
+  
+    let message = {
       read: 1,
       fromMe: true,
       mediaUrl: "",
@@ -594,17 +595,32 @@ const MessageInputCustom = (props) => {
         : inputMessage.trim(),
       quotedMsg: replyingMessage,
     };
+    if (!message.fromMe && message.message?.conversation) {
+      message = {
+        ...message,
+        message: {
+          extendedTextMessage: {
+            text: message.message.conversation,
+          },
+        },
+      };
+      delete message.message.conversation;
+    }
+  
+    console.log("Mensgem: " + JSON.stringify(message.quotedMsg));
+  
     try {
       await api.post(`/messages/${ticketId}`, message);
     } catch (err) {
       toastError(err);
     }
-
+  
     setInputMessage("");
     setShowEmoji(false);
     setLoading(false);
     setReplyingMessage(null);
   };
+  
 
   const handleStartRecording = async () => {
     setLoading(true);

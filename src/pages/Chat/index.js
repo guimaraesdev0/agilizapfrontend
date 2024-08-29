@@ -212,7 +212,6 @@ function Chat(props) {
 
     socket.on(`company-${companyId}-chat-user-${user.id}`, (data) => {
       if (data.action === "create") {
-        console.log("CHAT CREATE 000001")
         setChats((prev) => [data.record, ...prev]);
       }
       if (data.action === "update") {
@@ -230,7 +229,6 @@ function Chat(props) {
     });
 
     socket.on(`company-${companyId}-chat`, (data) => {
-      console.log("CHAT DELETE 000001")
 
       if (data.action === "delete") {
         const filteredChats = chats.filter((c) => c.id !== +data.id);
@@ -244,7 +242,6 @@ function Chat(props) {
     });
 
     if (isObject(currentChat) && has(currentChat, "id")) {
-      console.log("CHAT NEW MESSAGE 000001")
 
       socket.on(`company-${companyId}-chat-${currentChat.id}`, (data) => {
         if (data.action === "new-message") {
@@ -262,7 +259,6 @@ function Chat(props) {
         }
 
         if (data.action === "update") {
-          console.log("CHAT UPADTE 000001")
           const changedChats = chats.map((chat) => {
             if (chat.id === data.chat.id) {
               return {
@@ -293,7 +289,6 @@ function Chat(props) {
   };
 
   const atualizarChats = async () => {
-    console.log("Chats foram atualizados")
     findChats().then((data) => {
       const { records } = data;
       if (records.length > 0) {
@@ -330,7 +325,6 @@ function Chat(props) {
 
   const findMessages = async (chatId) => {
     setLoading(true);
-    console.log("CHAT findmassage 000001")
 
     try {
       const { data } = await api.get(
