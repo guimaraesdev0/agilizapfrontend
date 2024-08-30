@@ -105,6 +105,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, ticketId, cleanCo
 
 	useEffect(() => {
 		const { companyId } = user;
+		
 		if (open) {
 			try {
 				(async () => {

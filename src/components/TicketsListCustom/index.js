@@ -211,7 +211,8 @@ const TicketsListCustom = (props) => {
 
     const shouldUpdateTicket = (ticket) =>
       (!ticket.userId || ticket.userId === user?.id || showAll) &&
-      (!ticket.queueId || selectedQueueIds.indexOf(ticket.queueId) > -1);
+      (!ticket.queueId || selectedQueueIds.indexOf(ticket.queueId) > -1) &&
+      ticket.whatsappId === user.whatsappId; // Add this condition
 
     const notBelongsToUserQueues = (ticket) =>
       ticket.queueId && selectedQueueIds.indexOf(ticket.queueId) === -1;
@@ -225,7 +226,6 @@ const TicketsListCustom = (props) => {
     });
 
     socket.on(`company-${companyId}-ticket`, (data) => {
-      
       if (data.action === "updateUnread") {
         dispatch({
           type: "RESET_UNREAD",
@@ -250,37 +250,14 @@ const TicketsListCustom = (props) => {
     });
 
     socket.on(`company-${companyId}-appMessage`, (data) => {
-      const queueIds = queues.map((q) => q.id);
-      if (
-        profile === "user" &&
-        (queueIds.indexOf(data.ticket?.queue?.id) === -1 ||
-          data.ticket.queue === null)
-      ) {
-        return;
-      }
-
-      if (data.action === "create" && shouldUpdateTicket(data.ticket) && ( status === undefined || data.ticket.status === status)) {
-
+      if (data.action === "create" && shouldUpdateTicket(data.ticket) && 
+          (status === undefined || data.ticket.status === status)) {
         if (data.ticket.status === "pending" && user.whatsappId === data.ticket.whatsappId) {
           dispatch({
             type: "UPDATE_TICKET_UNREAD_MESSAGES",
             payload: data.ticket,
-          });         
-        }else{
+          });
         }
-
-
-
-      }
-    });
-
-    socket.on(`company-${companyId}-contact`, (data) => {
-
-      if (data.action === "update") {
-        dispatch({
-          type: "UPDATE_TICKET_CONTACT",
-          payload: data.contact,
-        });
       }
     });
 
