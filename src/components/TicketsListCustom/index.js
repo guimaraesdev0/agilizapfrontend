@@ -211,7 +211,7 @@ const TicketsListCustom = (props) => {
 
     const shouldUpdateTicket = (ticket) =>
       (!ticket.userId || ticket.userId === user?.id || showAll) &&
-      (!ticket.queueId || selectedQueueIds.indexOf(ticket.queueId) > -1)
+      (!ticket.queueId || selectedQueueIds.indexOf(ticket.queueId) > -1) && ticket.whatsappId === user.whatsappId;
     
     const notBelongsToUserQueues = (ticket) =>
       ticket.queueId && selectedQueueIds.indexOf(ticket.queueId) === -1;
